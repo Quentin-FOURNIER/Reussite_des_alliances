@@ -1,4 +1,5 @@
 import affichage
+import init
 import copy
 
 
@@ -98,3 +99,161 @@ def jeu_complet_mode_auto(pioche, affiche=False):
         une_suite_de_sauts(liste_tas, copie_de_la_pioche, affiche)
 
     return liste_tas
+
+
+def jeu_mode_auto_modeF(liste_tas, pioche):
+    """
+    Fini la réussite
+
+    @param liste_tas : cartes sur la table
+    @type liste_tas : list
+
+    @param pioche : cartes dans la pioche
+    @type pioche : list
+    """
+
+    while pioche:
+        une_suite_de_sauts(liste_tas, pioche, True)
+
+
+def affichage_texte_menu():
+    print("Découvrir une carte de la pioche (P)")
+    print("Saisir un saut à faire (S)")
+    print("Laisser l'ordinateur finir la réussite (F)")
+    print("Abandonner la partie (Q)\n")
+    return input("Quelle action souhaitez-vous effectuer : ")
+
+
+def menu():
+    """
+    Menu
+
+    @return: le choix de l'utilisateur
+    @rtype: str
+    """
+
+    print("- - - - - - - - - - - - - MENU - - - - - - - - - - - - -\n")
+    action = affichage_texte_menu()
+
+    while action != "P" and action != "S" and action != "F" and action != "Q":
+        print(
+            "\nVous avez saisit une commande erronée ! Veuillez choisir une commande valide dans la liste ci-dessous "
+            ":\n")
+        action = affichage_texte_menu()
+
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - -")
+    return action
+
+
+def abandon_modeQ(liste_tas, pioche):
+    """
+    Fini le jeu sans faire de saut
+
+    @param liste_tas : cartes sur la table
+    @type liste_tas : list
+
+    @param pioche : cartes dans la pioche
+    @type pioche : list
+    """
+
+    while len(pioche) != 0:
+        liste_tas.append(pioche.pop(0))
+        affichage.affichage_jeu(liste_tas)
+
+
+def pioche_modeP(liste_tas, pioche):
+    """
+    Pioche une carte et affiche l'état courant
+
+    @param liste_tas : cartes sur la table
+    @type liste_tas : list
+
+    @param pioche : cartes dans la pioche
+    @type pioche : list
+    """
+
+    liste_tas.append(pioche.pop(0))
+    affichage.affichage_jeu(liste_tas)
+
+
+def jeu_mode_manuel(pioche, nb_tas_max=2):
+    """
+    Jeu en mode manuel
+
+    @param pioche : cartes dans la pioche
+    @type pioche : list
+
+    @param nb_tas_max : nombre de tas maximums pour gagner
+    @type nb_tas_max : int
+
+    @return : cartes sur la table
+    @rtype : list
+    """
+    copie_pioche = copy.copy(pioche)
+    print("Nouvelle partie de : LA RÉUSSITE DES ALLIANCES !\n")
+    end = False
+
+    # On initialise une liste contenant les tas sur la table (initialement vide) :
+    liste_tas = []
+
+    while not end:
+        action = menu()
+        # F : l'utilisateur demande à l'ordinateur de finir la partie seul :
+        if action == 'F':
+            end = True
+            jeu_mode_auto_modeF(liste_tas, copie_pioche)
+
+        # Q : l'utilisateur veut abandonner la partie
+        elif action == "Q":
+            end = True
+            abandon_modeQ(liste_tas, copie_pioche)
+
+        # P : L'utilisateur veut piocher une carte :
+        elif action == "P":
+            pioche_modeP(liste_tas, copie_pioche)
+
+        # S : L'utilisateur souhaite effectuer un saut :
+        elif action == "S":
+            indice = int(input(
+                "Saisir le tas que vous souhaitez faire sauter (le premier tas correspond à l'indice 0, "
+                "le deuxième à l'indice 1 ...) : "))
+
+            if not saut_si_possible(liste_tas, indice):
+                print("Saut impossible\n")
+            else:
+                affichage.affichage_jeu(liste_tas)
+
+    if len(liste_tas) <= nb_tas_max:
+        print("GAGNE !!!")
+    else:
+        print("PERDU")
+
+    # On retourne la liste des cartes sur la table :
+    return liste_tas
+
+
+def lance_jeu(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
+    """
+    Cette fonction permet de lancer une réussite en mode auto ou manuel, avec 32 ou 52 cartes, en affichant les
+    étapes ou non pour le mode auto et en donnant le nombre de tas max pour une victoire pour le mode manuel
+
+    @param mode : manuel ou auto
+    @type mode : str
+
+    @param nb_cartes : nombre de cartes dans le jeu
+    @type nb_cartes : int
+
+    @param affiche : affichage des étapes
+    @type affiche : bool
+
+    @param nb_tas_max : nombre de cartes max à la fin pour gagner
+    @type nb_tas_max : int
+
+    @return : cartes sur la table à la fin
+    @rtype : list
+    """
+
+    if mode == 'auto':
+        return jeu_complet_mode_auto(init.init_pioche_alea(nb_cartes), affiche)
+    else:
+        return jeu_mode_manuel(init.init_pioche_alea(nb_cartes), nb_tas_max)
