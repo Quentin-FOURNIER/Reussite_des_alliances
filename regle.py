@@ -1,4 +1,5 @@
 import affichage
+import copy
 
 
 def alliance(carte1, carte2):
@@ -39,6 +40,18 @@ def saut_si_possible(liste_cartes_tas, num_tas):
 
 
 def une_suite_de_sauts(liste_tas, pioche, affiche=False):
+    """
+    L'ordinateur fait tous les sauts possibles à partir d'un premier si celui-ci est possible
+
+    @param liste_tas : tas en cours
+    @type liste_tas : list
+
+    @param pioche : pioche
+    @type pioche : list
+
+    @param affiche : affiche ou non
+    @type affiche : bool
+    """
 
     carte_en_cours = pioche.pop(0)
     liste_tas.append(carte_en_cours)
@@ -52,10 +65,36 @@ def une_suite_de_sauts(liste_tas, pioche, affiche=False):
     while True:
         drapeau = False
         for carte in liste_tas:
-            if saut_si_possible(liste_tas, liste_tas.index(carte)) and affichage:
-                affichage.affichage_jeu(liste_tas)
+            if saut_si_possible(liste_tas, liste_tas.index(carte)):
+                if affiche:
+                    affichage.affichage_jeu(liste_tas)
                 drapeau = True
                 break
 
         if not drapeau:
             return
+
+
+def jeu_complet_mode_auto(pioche, affiche=False):
+    """
+    Permet à l'ordinateur de jouer tout seul de façon parfaite, il joue une partie complete.
+
+    @param pioche : la pioche
+    @type pioche : list
+
+    @param affiche : Si affiche vaut True on voit toutes les étapes
+    @type affiche : bool
+
+    @return : le tas final
+    @rtype : list
+    """
+    liste_tas = []
+    copie_de_la_pioche = copy.copy(pioche)
+
+    if affiche:
+        affichage.affichage_jeu(pioche)
+
+    while copie_de_la_pioche:
+        une_suite_de_sauts(liste_tas, copie_de_la_pioche, affiche)
+
+    return liste_tas

@@ -8,10 +8,11 @@ import init
 import affichage
 import regle
 
+
 # affichage
 
 
-#affichage
+# affichage
 
 
 # affichage
@@ -47,34 +48,13 @@ def ecrire_fichier_reussite(nom_fich, pioche):
     # On ferme le fichier texte :
     fichier.close()
 
+
+# règle
+
+
 # règle
 
 
-# règle
-def reussite_mode_auto(pioche, affiche=False):
-    '''Cette fonction permet à l'ordinateur de jouer tout seul de façcon parfaite, il joue une partie complette. Si affiche vaut True on voit toutes les étapes, sinon on ne voit rien. Cette fonction ne modifi pas la liste pioche en argument.
-    '''
-
-    # On import copy
-    import copy
-    # On crée le tas sur la table, qui ne contient initialement aucune carte.
-    liste_tas = []
-    # On copie la liste pioche en argument pour ne pas la modifier et modifier uniquement la copie
-    copypioche = copy.copy(pioche)
-
-    # On crée une boucle qui va tourner jusqu'a ce que la pioche soit vide (que la partie soit donc terminée)
-
-    if affiche != False:
-        affichage.affichage_jeu(copypioche)
-    while copypioche != []:
-        # Si affiche vaut False l'ordinateur fait la partie seul mais ne montre rien : on ne voit pas les étapes
-        if affiche == False:
-            regle.une_suite_de_sauts(liste_tas, copypioche)
-        # Sinon (affiche vaut True) l'ordinateur fait seul la partie mais l'utilisateur voit toutes les étapes que fait l'ordinateur
-        else:
-            regle.une_suite_de_sauts(liste_tas, copypioche, True)
-    # En retourne la liste des cartes qu'il reste sur la table a la fin :
-    return liste_tas
 
 # règle
 def reussite_mode_auto_modeF(liste_tas, pioche):
@@ -82,6 +62,7 @@ def reussite_mode_auto_modeF(liste_tas, pioche):
     '''
     while pioche != []:
         regle.une_suite_de_sauts(liste_tas, pioche, True)
+
 
 # affichage
 def menu():
@@ -113,6 +94,7 @@ def menu():
     # Enfin on retourne l'action une fois qu'elle est correcte :
     return action
 
+
 # règle
 def abandon_modeQ(liste_tas, pioche):
     '''Cette fonction réagit à l'abandon d'un joueur, Cela met une a une toutes les cartes sur la table sans effectuer de saut
@@ -126,6 +108,7 @@ def abandon_modeQ(liste_tas, pioche):
         # On affiche chaque étapes :
         affichage.affichage_jeu(liste_tas)
 
+
 # règle
 def pioche_modeP(liste_tas, pioche):
     '''Cette fonction permet d'effectuer une simple pioche manuelement, puis d'afficher l'etape
@@ -136,6 +119,7 @@ def pioche_modeP(liste_tas, pioche):
     liste_tas.append(a)
     # On affiche l'étape :
     affichage.affichage_jeu(liste_tas)
+
 
 # règle
 def reussite_mode_manuel(pioche, nb_tas_max=2):
@@ -194,6 +178,7 @@ def reussite_mode_manuel(pioche, nb_tas_max=2):
     # On retourne la liste des cartes sur la table :
     return liste_tas
 
+
 # règle
 def lance_reussite(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
     '''Cette fonction permet de lancer une réussite en mode auto ou manuel, avec 32 ou 52 cartes, en affichant les étapes ou non pour le mode auto et en donnant le nombre de tas max pour une victoire pour le mode manuel
@@ -202,12 +187,13 @@ def lance_reussite(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
     pioche = init.init_pioche_alea(nb_cartes)
     # Pour le mode automatique :
     if mode == 'auto':
-        save = reussite_mode_auto(pioche, affiche)
+        save = regle.jeu_complet_mode_auto(pioche, affiche)
     # Pour le mode manuel
     elif mode == 'manuel':
         save = reussite_mode_manuel(pioche, nb_tas_max)
     # On retourne la liste de carte que compose le tas
     return save
+
 
 # règle
 def lance_reussite_meilleur_echange_consecutif(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
@@ -220,12 +206,13 @@ def lance_reussite_meilleur_echange_consecutif(mode, nb_cartes=32, affiche=False
 
     # Pour le mode automatique :
     if mode == 'auto':
-        save = reussite_mode_auto(pioche, affiche)
+        save = regle.jeu_complet_mode_auto(pioche, affiche)
     # Pour le mode manuel
     elif mode == 'manuel':
         save = reussite_mode_manuel(pioche, nb_tas_max)
     # On retourne la liste de carte que compose le tas
     return save
+
 
 # simulation
 def res_multi_simulation(nb_sim, nb_cartes=32):
@@ -244,6 +231,7 @@ def res_multi_simulation(nb_sim, nb_cartes=32):
     # On retourne la liste contenant les résultats de la simulation
     return data
 
+
 # simulation
 def res_multi_simulation_meilleur_echange_consecutif(nb_sim, nb_cartes=32):
     '''Cette fonction permet de simuler plusieurs reussite mode auto et de renvoyer une liste des nombre tas de fin de partie pour chaque partie (adapté pour stats de meilleur échange consécutif
@@ -260,6 +248,7 @@ def res_multi_simulation_meilleur_echange_consecutif(nb_sim, nb_cartes=32):
         data.append(tas_save)
     # On retourne la liste contenant les résultats de la simulation
     return data
+
 
 # stat
 def moyenne_liste(liste):
@@ -281,6 +270,7 @@ def moyenne_liste(liste):
     # On retourne la moyenne
     return moyenne
 
+
 # stat
 def statistiques_nb_tas(nb_sim, nb_cartes=32):
     '''Cette fonction permet d'afficher le minimum, le maximum et la moyenne des valeur obtenue apres avoir simulé des parties parfaites
@@ -300,6 +290,7 @@ def statistiques_nb_tas(nb_sim, nb_cartes=32):
     print("minimum =", minimum)
     print("maximum =", maximum)
     print("moyenne =", moyenne)
+
 
 # stat
 def statistiques_nb_tas_moyenne(nb_sim, nb_cartes):
@@ -420,7 +411,7 @@ def echange_next(pioche, indice):
     # On fait l'échange entre les deux cartes
     copypioche[indice], copypioche[indice + 1] = copypioche[indice + 1], copypioche[indice]
     # On récupère la liste de cartes restant sur le tas
-    outliste = reussite_mode_auto(copypioche, affiche=False)
+    outliste = regle.jeu_complet_mode_auto(copypioche, affiche=False)
     # On récupère le nombre de tas quil reste sur la table
     tas = len(outliste)
     # On retourne la pioche avec le nombre de tas après l'échange
@@ -433,7 +424,7 @@ def meilleur_echange_consecutif(pioche):
     # On import copy pour ne pas modifier pioche
     import copy
     # mini correspond au nombre de tas de la pioche initiale
-    mini = len(reussite_mode_auto(pioche, affiche=False))
+    mini = len(regle.jeu_complet_mode_auto(pioche, affiche=False))
     # mini2 est une copy de mini
     mini2 = mini
     # On crée minix qui correspond à l'amélioration après l'échange qui vaut au minimum 0 dans le cas ou aucun échange ne permet d'amèliorer la suite
@@ -464,17 +455,26 @@ def meilleur_echange_consecutif(pioche):
 
 if __name__ == "__main__":
     pioche_trie = init.init_pioche_fichier()
+
     pioche_alea = init.init_pioche_alea(52)
     # affichage.affichage_jeu(pioche_alea)
-    # regle.une_suite_de_sauts([{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'}, {'valeur': '8', 'couleur': 'P'}],[{'valeur': '10', 'couleur': 'C'}, {'valeur': '9', 'couleur': 'C'}],)
-    regle.une_suite_de_sauts([{'couleur': 'T', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'D'}, {'couleur': 'P', 'valeur': '8'}, {'couleur': 'K', 'valeur': '8'}, {'couleur': 'T', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '9'}, {'couleur': 'P', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'R'}, {'couleur': 'T', 'valeur': '7'}, {'couleur': 'T', 'valeur': 'V'}, {'couleur': 'C', 'valeur': '10'}, {'couleur': 'P', 'valeur': '7'}, {'couleur': 'P', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '10'}, {'couleur': 'T', 'valeur': 'A'}], [{'couleur': 'P', 'valeur': '10'}, {'couleur': 'K', 'valeur': '10'}, {'couleur': 'K', 'valeur': '7'}], True)
-    # print(reussite_mode_auto(init_pioche_alea(32),True))
+    regle.une_suite_de_sauts([{'couleur': 'T', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'D'},
+                              {'couleur': 'P', 'valeur': '8'}, {'couleur': 'K', 'valeur': '8'},
+                              {'couleur': 'T', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '9'},
+                              {'couleur': 'P', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'R'},
+                              {'couleur': 'T', 'valeur': '7'}, {'couleur': 'T', 'valeur': 'V'},
+                              {'couleur': 'C', 'valeur': '10'}, {'couleur': 'P', 'valeur': '7'},
+                              {'couleur': 'P', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '10'},
+                              {'couleur': 'T', 'valeur': 'A'}],
+                             [{'couleur': 'P', 'valeur': '10'}, {'couleur': 'K', 'valeur': '10'},
+                              {'couleur': 'K', 'valeur': '7'}], False)
+    print(regle.jeu_complet_mode_auto(init.init_pioche_alea(32), False))
     # print(reussite_mode_manuel(init_pioche_alea(32)))
     # print(lance_reussite('manuel',nb_cartes=52,affiche=True))
     # print(res_multi_simulation(1000,nb_cartes=32))
     # statistiques_nb_tas(2,nb_cartes=32)
     # stats_party(32,True)
-   #  print(echange_next(init_pioche_fichier('Fichiers_a_fournir/data_init.txt'), 26))
-   #  print(meilleur_echange_consecutif(init_pioche_fichier('Fichiers_a_fournir/data_init.txt')))
-   #  stats_party_meilleur_echange_consecutif(32, True)
-   #
+#  print(echange_next(init_pioche_fichier('Fichiers_a_fournir/data_init.txt'), 26))
+#  print(meilleur_echange_consecutif(init_pioche_fichier('Fichiers_a_fournir/data_init.txt')))
+#  stats_party_meilleur_echange_consecutif(32, True)
+#
