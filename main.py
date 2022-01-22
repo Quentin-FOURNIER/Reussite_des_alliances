@@ -1,172 +1,20 @@
-################# PROJET SOLITAIRE DES ALLIANCES QUENTIN FOURNIER L1 SPI 01#######################################
+##########################################
+# TITRE : PROJET SOLITAIRE DES ALLIANCES #
+# AUTEUR : Quentin FOURNIER              #
+# NIVEAU : L1 SPI                        #
+##########################################
+
+import init
+import affichage
+import regle
+
+# affichage
 
 
-# PARTIE OBLIGATOIRE######################################
+#affichage
 
 
-def init_pioche_fichier(nomdufichier):
-    """Cette fonction permet de prendre un fichier texte avec les valeurs des cartes et de renvoyer une liste de dictionnaire au bon format
-    """
-    # On ouvre le fichier :
-    fichier = open(nomdufichier, 'r', encoding="utf-8")
-    # On lit le fichier :
-    texte = fichier.read()
-    # On crée une liste avec chaque carte comme élément :
-    l = texte.split()
-    # On crée une liste vide dans laquelle on va venir ajouter les dicos des cartes :
-    listededico = []
-    # On initialise une boucle pour parcourir chaque sous liste :
-    while len(l) != 0:
-        # Petit dictionnaire qui va contenir une carte puis être vidé et ainsi de suite :
-        dico = {}
-        # On prend la première sous-liste de data :
-        data = l.pop(0)
-        # Puis on crée une nouvelle liste contenant 3 éléments, la valeur, un tiret et la couleur
-        data2 = list(data)
-        if len(data2) == 4:
-            val = data2[0] + data2[1]
-            cou = data[3]
-        # On récupère la valeur et la couleur pour data2 != 10
-        else:
-            val = data2[0]
-            cou = data2[2]
-        # Puis on crée le dictionnaire :
-        dico["valeur"] = val
-        dico["couleur"] = cou
-        # On ajoute le petit dico contenant la carte dans notre grosse liste
-        listededico.append(dico)
-    # On ferme le fichier
-    fichier.close()
-    # On retourne la grosse liste
-    return listededico
-
-
-def init_pioche_str(nomdustr):
-    """Cette fonction permet de prendre un str avec les valeurs des carte et de renvoyer une liste de dictionnaire au bon format
-    """
-
-    # On crée une liste avec chaque carte comme élément :
-    l = nomdustr.split()
-    # On crée une liste vide dans laquelle on va venir ajouter les dico des cartes :
-    listededico = []
-    # On initialize une boucle pour parcourir chaque sous liste :
-    while len(l) != 0:
-        # Petit dictionnaire qui va contenir une carte puis être vidé et ainsi de suite :
-        dico = {}
-        # On prend la première sous-liste de data :
-        data = l.pop(0)
-        # Puis on crée une nouvelle liste contenant 3 élémenet, la valeur, un tiret et la couleur
-        data2 = list(data)
-        if len(data2) == 4:
-            val = data2[0] + data2[1]
-            cou = data[3]
-        # On récupère la valeur et la couleur pour data2!=10
-        else:
-            val = data2[0]
-            cou = data2[2]
-        # Puis on crée le dictionnaire :
-        dico["valeur"] = val
-        dico["couleur"] = cou
-        # On ajoute le petit dico contenant la carte dans notre grosse liste
-        listededico.append(dico)
-    # On retourne la grosse liste
-    return listededico
-
-
-def carte_to_chaine(dico):
-    """Cette fonction permet de changer un dictionnaire={'valeur':'4', 'couleur':'C'} contenant un nombre et une couleur en str du style 4♥ :
-    """
-    import copy
-
-    # On crée les variables qui vont nous servir :
-    scarreau = chr(9826)
-    scoeur = chr(9825)
-    spique = chr(9824)
-    strefle = chr(9827)
-    valeurpossible = ["A", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "V", "D", "R"]
-    couleurpossible = ["C", "K", "P", "T"]
-    esp = " "
-    # on crée les drapeau pour vérifier la viabilité des dictonaire à exploiter :
-    couleurvalide = False
-    valeurvalide = False
-    # On crée un compteur i qui va nous permettre de parcourir des listes de viabilité :
-    i = 0
-    # On crée une copy du dico :
-    copydico = copy.copy(dico)
-    # On récupère la valeur du dico et on vérifie sa viabilité :
-    valeur = copydico["valeur"]
-    if valeur in valeurpossible:
-        valeurvalide = True
-    # On récupère la couleur du dico et on vérifie sa viabilité :
-    couleur = copydico["couleur"]
-    if couleur in couleurpossible:
-        couleurvalide = True
-    # On a désormais des drapeaux qui nous donne la viabilité de couleur et valeur, on va vérifier les erreurs :
-    # si ni l'un ni l'autre :
-    if valeurvalide == False and couleurvalide == False:
-        viabilite_carte_to_chaine = 'CouleurNon_ValeurNon'
-        return viabilite_carte_to_chaine
-    # si que chiffre :
-    elif valeurvalide == False and couleurvalide == True:
-        viabilite_carte_to_chaine = 'CouleurOui_ValeurNon'
-        return viabilite_carte_to_chaine
-    # si que valeur :
-    elif valeurvalide == True and couleurvalide == False:
-        viabilite_carte_to_chaine = 'CouleurNon_ValeurOui'
-        return viabilite_carte_to_chaine
-        # si tout est valide :
-    else:
-        if couleur == "C":
-            couleur = scoeur
-        elif couleur == "K":
-            couleur = scarreau
-        elif couleur == "P":
-            couleur = spique
-        else:
-            couleur = strefle
-    # Enfin on crée la chaine
-    # Si valeur = 10 :
-    if valeur == '10':
-        chaine = valeur + couleur
-    # Si valeur!=10 :
-    else:
-        chaine = esp + valeur + couleur
-    # On retourne la chaine contenant un espace (à part pour 10) sous la forme | |4♥
-    return chaine
-
-
-def afficher_reussite(listecarte):
-    '''Cette fonction permet d'afficher la suite avec la valeur et le symbole séparé par un espace (2 pour les différents de 10) avec une ligne blanche en dessous
-    '''
-    # On importe copy, on en aura besoin pour ne pas modifier la liste en argument :
-    import copy
-    # On copy la liste pour ne pas modifier la liste en argument
-    copylistecarte = copy.copy(listecarte)
-    # On crée des variable correpondant aux str espace et tiret pour la mise en forme :
-    esp = " "
-    chaine = ""
-    # On définit un drapeau pour vérifier qu'il y a au minimum une carte dans la liste :
-    presence = False
-    # On crée une boucle qui pour chaque première carte va recréer le texte mis correctement en forme dans la chaine :
-    while len(copylistecarte) > 1:
-        data = copylistecarte.pop(0)
-        data = carte_to_chaine(data)
-        chaine += data + esp
-        presence = True
-    # On refait la même chose pour la dernière carte, sans mettre d'espace à la fin :
-    if len(copylistecarte) == 1:
-        data = copylistecarte.pop(0)
-        data = carte_to_chaine(data)
-        chaine += data
-        presence = True
-    # S'il y avait au moins une carte dans la liste :
-    if presence == True:
-        print(chaine, '\n')
-    # Si la liste était vide
-    else:
-        print('\n', '\n', end='', sep='')
-
-
+# affichage
 def ecrire_fichier_reussite(nom_fich, pioche):
     '''Cette fonction permet de sauvegarder une pioche dans un fichier texte
     '''
@@ -199,121 +47,10 @@ def ecrire_fichier_reussite(nom_fich, pioche):
     # On ferme le fichier texte :
     fichier.close()
 
-
-def init_pioche_alea(nb_cartes):
-    '''Cette fonction permet de mélanger un jeu de 32 cartes ou un jeu de 52 cartes
-    '''
-    # On importe random pour mélanger la liste :
-    import random
-    # Pour un jeu de 32 cartes :
-    if nb_cartes == 32:
-        # On crée une liste de carte a partir d'un str de 32 cartes :
-        listecarte = init_pioche_fichier("Fichiers_a_fournir/data_init.txt")
-        # On mélange les cartes :
-        random.shuffle(listecarte)
-        # On retourne la nouvelle liste de carte correctement mélanger :
-        return listecarte
-    # Pour un jeu de 52 cartes :
-    elif nb_cartes == 52:
-        # On crée le jeu de 52 cartes
-        strcarte = 'V-C 8-P V-K A-C 10-P 8-T 8-K 9-T V-P A-P 10-K 9-P 7-T R-T 10-C 9-K 9-C D-T R-C 8-C D-K 7-C A-T 7-P V-T 7-K D-C A-K D-P 10-T R-K R-P 2-C 2-K 2-P 2-T 3-C 3-P 3-K 3-T 4-C 4-K 4-P 4-T 5-C 5-K 5-T 5-P 6-K 6-T 6-C 6-P'
-        # On transforme en liste
-        listecarte = init_pioche_str(strcarte)
-        # On mélange le jeu
-        random.shuffle(listecarte)
-        # On retourne le jeu
-        return listecarte
-    # Si le jeu n'est ni composé de 52 cartes ni composé de 32 cartes, il n'est pas conventionnel : il est possible de rajouter un elif pour mélanger un autre type de jeu
-    else:
-        return "Le jeu de carte n'est pas conventionel"
+# règle
 
 
-def alliance(carte1, carte2):
-    '''Cette fonction permet de vérifier si deux cartes ont soit la même couleur, soit la même valeur
-    '''
-    # On crée un drapeau initialement False qui va devenir True si les deux cartes ont soit le même symbol, soit la même couleur
-    idem = False
-    # On récupère la valeur de la carte 1
-    val1 = carte1["valeur"]
-    # On récupère la valeur de la carte 2
-    val2 = carte2['valeur']
-    # On récupère la couleur de la carte 1
-    cou1 = carte1['couleur']
-    # On récupère la couleur de la carte 2
-    cou2 = carte2['couleur']
-    # On vérifie si la couleur ou la valeur des deux cartes correspondent :
-    if val1 == val2 or cou1 == cou2:
-        # Si cela correspond le drapeau devient True
-        idem = True
-    # On retourne True si les deux cartes correspondent, False sinon :
-    return idem
-
-
-def saut_si_possible(liste_tas, num_tas):
-    '''Cette fonction vérifie si un saut est possible avec la liste des cartes sur la table, si le saut est possible il le fait
-    '''
-    # On définie un drapeau qui reste False tant que le tas n'a pas sauté
-    possible = False
-    # On vérifie tout d'abbord que l'action va etre effectuer uniquement si la carte n'est pas aux extrémité de la table, et que le tas est composé d'au moins trois tas :
-    if len(liste_tas) > 2 and num_tas > 0 and num_tas < (len(liste_tas) - 1):
-        # On prend la carte d'avant
-        carte1 = liste_tas[num_tas - 1]
-        # On prend la carte d'après
-        carte2 = liste_tas[num_tas + 1]
-        # On vérifie que les deux cartes correspondent(valeur ou couleur) :
-        if alliance(carte1, carte2) == True:
-            # Etant donné que l'on effectue le saut le drapeau devient True
-            possible = True
-            # On effectue le saut
-            liste_tas.pop(num_tas - 1)
-
-    # Si le saut n'a pas été effectuer on retourne False, sinon on retourne True
-    return possible
-
-
-def une_etape_reussite(liste_tas, pioche, affiche=False):
-    '''Cette fonction permet d'éffectuer une étape de la réussite. 
-    Elle pioche une carte
-    Elle fait le saut si il est possible
-    Elle fait tous les nouveaux sauts possibles en partant de la gauche
-    '''
-    # On définie un drapeau pour recommencer quand il y a un saut plus loin
-    retry = True
-    # On retire la carte en haut de la pioche
-    carteencours = pioche.pop(0)
-    # On pose cette carte à droite du tas
-    liste_tas.append(carteencours)
-    # On affiche la première étape sur affiche est égale à True
-    if affiche == True:
-        afficher_reussite(liste_tas)
-
-    # On effectue le saut entre la derniere et l'antépénultième carte si il est possible
-    test = saut_si_possible(liste_tas, len(liste_tas) - 2)
-    # Si l'utilisateur souhaite afficher les étapes on affiche l'étape
-    if affiche == True and test == True:
-        afficher_reussite(liste_tas)
-    # Initialement retry vaut True donc on entre dans la boucle au moins une fois
-    while retry == True:
-        # retry devient False pour que la boucle ne recommence pas, a par si un saut est effectué
-        retry = False
-        # On va essayer pour chaque possibilité d'effectuer un saut en partant de la gauche, on initialize une boucle qui efectue ne nombre de carte dans le tas moins 2 fois le test :
-        retry2 = False
-        for i in range(len(liste_tas) - 2):
-            # Tant que l'on a pas effectué un saut en partant de la gauche
-            if retry2 == False:
-                # On essait pour l'indice i+1 à chaque fois car i commence à 0, un saut n'est possible qu'à partir de l'indice 1
-                pas = i + 1
-                # Si un saut est efectué retry2 devient True est plus aucun saut n'est possible de la gauche dans cette boucle, cependant une nouvelle boucle va recoomencer
-                retry2 = saut_si_possible(liste_tas, pas)
-                # Si un saut a été effectué
-                if retry2 == True:
-                    # SI l'utilisateur souhaite afficher les étapes on affiche celle-ci
-                    if affiche == True:
-                        afficher_reussite(liste_tas)
-                    # On permet de recommencer une boucle pour voir si un nouveau saut est désormais possible
-                    retry = True
-
-
+# règle
 def reussite_mode_auto(pioche, affiche=False):
     '''Cette fonction permet à l'ordinateur de jouer tout seul de façcon parfaite, il joue une partie complette. Si affiche vaut True on voit toutes les étapes, sinon on ne voit rien. Cette fonction ne modifi pas la liste pioche en argument.
     '''
@@ -328,25 +65,25 @@ def reussite_mode_auto(pioche, affiche=False):
     # On crée une boucle qui va tourner jusqu'a ce que la pioche soit vide (que la partie soit donc terminée)
 
     if affiche != False:
-        afficher_reussite(copypioche)
+        affichage.affichage_jeu(copypioche)
     while copypioche != []:
         # Si affiche vaut False l'ordinateur fait la partie seul mais ne montre rien : on ne voit pas les étapes
         if affiche == False:
-            une_etape_reussite(liste_tas, copypioche)
+            regle.une_suite_de_sauts(liste_tas, copypioche)
         # Sinon (affiche vaut True) l'ordinateur fait seul la partie mais l'utilisateur voit toutes les étapes que fait l'ordinateur
         else:
-            une_etape_reussite(liste_tas, copypioche, True)
+            regle.une_suite_de_sauts(liste_tas, copypioche, True)
     # En retourne la liste des cartes qu'il reste sur la table a la fin :
     return liste_tas
 
-
+# règle
 def reussite_mode_auto_modeF(liste_tas, pioche):
     '''Cette fonction permet à l'ordinateur de jouer tout seul de façon parfaite, il finit une partie.
     '''
     while pioche != []:
-        une_etape_reussite(liste_tas, pioche, True)
+        regle.une_suite_de_sauts(liste_tas, pioche, True)
 
-
+# affichage
 def menu():
     '''Cette fonction affiche un menu, demande a l'utilisateur quelle entrée il veut choisir dans le menu, vérifit si elle est correcte, puis renvoit sa réponse
     '''
@@ -376,7 +113,7 @@ def menu():
     # Enfin on retourne l'action une fois qu'elle est correcte :
     return action
 
-
+# règle
 def abandon_modeQ(liste_tas, pioche):
     '''Cette fonction réagit à l'abandon d'un joueur, Cela met une a une toutes les cartes sur la table sans effectuer de saut
     '''
@@ -387,9 +124,9 @@ def abandon_modeQ(liste_tas, pioche):
         # On la rajoute sur la table :
         liste_tas.append(a)
         # On affiche chaque étapes :
-        afficher_reussite(liste_tas)
+        affichage.affichage_jeu(liste_tas)
 
-
+# règle
 def pioche_modeP(liste_tas, pioche):
     '''Cette fonction permet d'effectuer une simple pioche manuelement, puis d'afficher l'etape
     '''
@@ -398,9 +135,9 @@ def pioche_modeP(liste_tas, pioche):
     # On la rajoute sur la table :
     liste_tas.append(a)
     # On affiche l'étape :
-    afficher_reussite(liste_tas)
+    affichage.affichage_jeu(liste_tas)
 
-
+# règle
 def reussite_mode_manuel(pioche, nb_tas_max=2):
     # On effectue une copie de la pioche pour ne pas modifier la liste en argument :
     import copy
@@ -443,11 +180,11 @@ def reussite_mode_manuel(pioche, nb_tas_max=2):
                     print("Indice invalide\n")
             print("")
             # Si aucun saut n'a été effectuer on retourne au menu
-            if saut_si_possible(liste_tas, indice) == False:
+            if regle.saut_si_possible(liste_tas, indice) == False:
                 print("Saut impossible\n")
             # Si un saut à été effectué on affiche l'étape :
             else:
-                afficher_reussite(liste_tas)
+                affichage.affichage_jeu(liste_tas)
     # On vérifit ensuite si le joueur à gagné ou perdu :
     if len(liste_tas) <= nb_tas_max:
         print("GAGNE !!!")
@@ -457,12 +194,12 @@ def reussite_mode_manuel(pioche, nb_tas_max=2):
     # On retourne la liste des cartes sur la table :
     return liste_tas
 
-
+# règle
 def lance_reussite(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
     '''Cette fonction permet de lancer une réussite en mode auto ou manuel, avec 32 ou 52 cartes, en affichant les étapes ou non pour le mode auto et en donnant le nombre de tas max pour une victoire pour le mode manuel
     '''
     # On crée une pioche mélangé :
-    pioche = init_pioche_alea(nb_cartes)
+    pioche = init.init_pioche_alea(nb_cartes)
     # Pour le mode automatique :
     if mode == 'auto':
         save = reussite_mode_auto(pioche, affiche)
@@ -472,12 +209,12 @@ def lance_reussite(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
     # On retourne la liste de carte que compose le tas
     return save
 
-
+# règle
 def lance_reussite_meilleur_echange_consecutif(mode, nb_cartes=32, affiche=False, nb_tas_max=2):
     '''Cette fonction permet de lancer une réussite en mode auto ou manuel, avec 32 ou 52 cartes, en affichant les étapes ou non pour le mode auto et en donnant le nombre de tas max pour une victoire pour le mode manuel (adapté pour faire un meilleur échange consécutif)
     '''
     # On crée une pioche mélangé :
-    pioche1 = init_pioche_alea(nb_cartes)
+    pioche1 = init.init_pioche_alea(nb_cartes)
     # On fait le meilleur echange consécutif
     pioche, poubelle = meilleur_echange_consecutif(pioche1)
 
@@ -490,7 +227,7 @@ def lance_reussite_meilleur_echange_consecutif(mode, nb_cartes=32, affiche=False
     # On retourne la liste de carte que compose le tas
     return save
 
-
+# simulation
 def res_multi_simulation(nb_sim, nb_cartes=32):
     '''Cette fonction permet de simuler plusieurs reussite mode auto et de renvoyer une liste des nombre tas de fin de partie pour chaque partie
     '''
@@ -507,7 +244,7 @@ def res_multi_simulation(nb_sim, nb_cartes=32):
     # On retourne la liste contenant les résultats de la simulation
     return data
 
-
+# simulation
 def res_multi_simulation_meilleur_echange_consecutif(nb_sim, nb_cartes=32):
     '''Cette fonction permet de simuler plusieurs reussite mode auto et de renvoyer une liste des nombre tas de fin de partie pour chaque partie (adapté pour stats de meilleur échange consécutif
     '''
@@ -524,7 +261,7 @@ def res_multi_simulation_meilleur_echange_consecutif(nb_sim, nb_cartes=32):
     # On retourne la liste contenant les résultats de la simulation
     return data
 
-
+# stat
 def moyenne_liste(liste):
     '''Cette fonction permet d'effectuer la moyenne de tous les termes d'une liste de nombre
     '''
@@ -544,7 +281,7 @@ def moyenne_liste(liste):
     # On retourne la moyenne
     return moyenne
 
-
+# stat
 def statistiques_nb_tas(nb_sim, nb_cartes=32):
     '''Cette fonction permet d'afficher le minimum, le maximum et la moyenne des valeur obtenue apres avoir simulé des parties parfaites
     '''
@@ -564,7 +301,7 @@ def statistiques_nb_tas(nb_sim, nb_cartes=32):
     print("maximum =", maximum)
     print("moyenne =", moyenne)
 
-
+# stat
 def statistiques_nb_tas_moyenne(nb_sim, nb_cartes):
     '''Cette fonction permet de retourner la moyenne des valeur obtenue apres avoir simulé des parties parfaites
     '''
@@ -726,16 +463,18 @@ def meilleur_echange_consecutif(pioche):
 
 
 if __name__ == "__main__":
-    print(init_pioche_fichier("Fichiers_a_fournir/data_init.txt"))
-    #afficher_reussite(transforme_fichier_en_liste_de_dico("Fichiers_a_fournir/data_init.txt"))
-    # une_etape_reussite([{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'}, {'valeur': '8', 'couleur': 'P'}],[{'valeur': '10', 'couleur': 'C'}, {'valeur': '9', 'couleur': 'C'}],)
-    # une_etape_reussite([{'couleur': 'T', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'D'}, {'couleur': 'P', 'valeur': '8'}, {'couleur': 'K', 'valeur': '8'}, {'couleur': 'T', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '9'}, {'couleur': 'P', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'R'}, {'couleur': 'T', 'valeur': '7'}, {'couleur': 'T', 'valeur': 'V'}, {'couleur': 'C', 'valeur': '10'}, {'couleur': 'P', 'valeur': '7'}, {'couleur': 'P', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '10'}, {'couleur': 'T', 'valeur': 'A'}], [{'couleur': 'P', 'valeur': '10'}, {'couleur': 'K', 'valeur': '10'}, {'couleur': 'K', 'valeur': '7'}], True)
+    pioche_trie = init.init_pioche_fichier()
+    pioche_alea = init.init_pioche_alea(52)
+    # affichage.affichage_jeu(pioche_alea)
+    # regle.une_suite_de_sauts([{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'},{'valeur': 'V', 'couleur': 'C'}, {'valeur': '8', 'couleur': 'P'}],[{'valeur': '10', 'couleur': 'C'}, {'valeur': '9', 'couleur': 'C'}],)
+    regle.une_suite_de_sauts([{'couleur': 'T', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'D'}, {'couleur': 'P', 'valeur': '8'}, {'couleur': 'K', 'valeur': '8'}, {'couleur': 'T', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '9'}, {'couleur': 'P', 'valeur': 'R'}, {'couleur': 'C', 'valeur': 'R'}, {'couleur': 'T', 'valeur': '7'}, {'couleur': 'T', 'valeur': 'V'}, {'couleur': 'C', 'valeur': '10'}, {'couleur': 'P', 'valeur': '7'}, {'couleur': 'P', 'valeur': 'D'}, {'couleur': 'T', 'valeur': '10'}, {'couleur': 'T', 'valeur': 'A'}], [{'couleur': 'P', 'valeur': '10'}, {'couleur': 'K', 'valeur': '10'}, {'couleur': 'K', 'valeur': '7'}], True)
     # print(reussite_mode_auto(init_pioche_alea(32),True))
     # print(reussite_mode_manuel(init_pioche_alea(32)))
     # print(lance_reussite('manuel',nb_cartes=52,affiche=True))
     # print(res_multi_simulation(1000,nb_cartes=32))
     # statistiques_nb_tas(2,nb_cartes=32)
     # stats_party(32,True)
-    print(echange_next(init_pioche_fichier('Fichiers_a_fournir/data_init.txt'),26))
-    print(meilleur_echange_consecutif(init_pioche_fichier('Fichiers_a_fournir/data_init.txt')))
-    stats_party_meilleur_echange_consecutif(32,True)
+   #  print(echange_next(init_pioche_fichier('Fichiers_a_fournir/data_init.txt'), 26))
+   #  print(meilleur_echange_consecutif(init_pioche_fichier('Fichiers_a_fournir/data_init.txt')))
+   #  stats_party_meilleur_echange_consecutif(32, True)
+   #
